@@ -1,5 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+  onAuthStateChanged,
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -19,4 +25,14 @@ export const login = () => {
       console.log(user);
     })
     .catch(console.error);
+};
+
+export const logout = () => {
+  signOut(auth).catch(console.error);
+};
+
+export const onUserStateChange = (callback: (user: {} | null) => void) => {
+  onAuthStateChanged(auth, (user) => {
+    callback(user);
+  });
 };

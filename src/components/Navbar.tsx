@@ -1,9 +1,19 @@
 import { Link } from "react-router-dom";
 import { FiShoppingBag } from "react-icons/fi";
 import { BsFillPencilFill } from "react-icons/bs";
-import { login } from "../api/firebase";
+import { login, logout, onUserStateChange } from "../api/firebase";
+import { useEffect, useState } from "react";
+import User from "./User";
 
 const Navbar = () => {
+  const [user, setUser] = useState<{} | null>();
+
+  useEffect(() => {
+    onUserStateChange((user: {} | null) => {
+      setUser(user);
+    });
+  }, []);
+
   return (
     <header className="flex justify-between border-b border-gray-300 p-5">
       <Link to="/" className=" flex items-center text-4xl text-brand">
@@ -16,7 +26,12 @@ const Navbar = () => {
         <Link to="/products/new" className=" text-l">
           <BsFillPencilFill />
         </Link>
-        <button onClick={login}>Login</button>
+        {user && <User user={user} />}
+        {!user ? (
+          <button onClick={login}>Login</button>
+        ) : (
+          <button onClick={logout}>LogOut</button>
+        )}
       </nav>
     </header>
   );
