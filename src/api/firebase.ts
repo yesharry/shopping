@@ -6,6 +6,7 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
+import { getDatabase, ref, get } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -17,6 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
+const database = getDatabase(app);
 
 export const login = () => {
   signInWithPopup(auth, provider)
@@ -32,7 +34,19 @@ export const logout = () => {
 };
 
 export const onUserStateChange = (callback: (user: {} | null) => void) => {
-  onAuthStateChanged(auth, (user) => {
-    callback(user);
+  onAuthStateChanged(auth, async (user) => {
+    const updateUser = user ? await adminUser(user) : null;
+    callback(updateUser);
+  });
+};
+
+const adminUser = (user: { uid: string } | null) => {
+  return get(ref(database, "admin")).then((snapshot) => {
+    if (snapshot.exists()) {
+      const admins = snapshot.val();
+      const isAdmin = admins.includes(user?.uid);
+      return { ...user, isAdmin };
+    }
+    return user;
   });
 };
