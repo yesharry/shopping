@@ -1,40 +1,53 @@
 import { Link } from "react-router-dom";
 import { FiShoppingBag } from "react-icons/fi";
 import { BsFillPencilFill } from "react-icons/bs";
-import { login, logout, onUserStateChange } from "../api/firebase";
+import Button from "./style/Button";
 import { useEffect, useState } from "react";
 import User from "./User";
-import Button from "./style/Button";
+import { login, logout, onUserStateChange } from "../api/firebase";
+
+export interface IUser {
+  photoURL: string;
+  displayName: string;
+  isAdmin?: boolean;
+}
 
 const Navbar = () => {
-  const [user, setUser] = useState<{ isAdmin?: boolean } | null>();
+  const [user, setUser] = useState<IUser>();
 
   useEffect(() => {
-    onUserStateChange((user: {} | null) => {
-      console.log("user", user);
+    onUserStateChange((user: any) => {
+      console.log(
+        "useEffect onUserStateChange 인자 type check ->",
+        typeof user
+      );
       setUser(user);
     });
   }, []);
 
+  console.log("state of Nav, user type check->", user, typeof user);
+
   return (
     <header className="flex justify-between border-b border-gray-300 p-5">
-      <Link to="/" className=" flex items-center text-4xl font-bold text-brand">
+      <Link to="/" className=" flex items-center text-4xl text-brand font-bold">
         <FiShoppingBag />
-        <h1>Shopping</h1>
+        <h1>Shoppy</h1>
       </Link>
       <nav className=" flex items-center gap-4 font-semibold">
         <Link to="/products">Products</Link>
-        <Link to="/carts">Carts</Link>
+        {user && <Link to="/carts">Carts</Link>}
         {user && user.isAdmin && (
           <Link to="/products/new" className=" text-l">
             <BsFillPencilFill />
           </Link>
         )}
-        {user && <User user={user} />}
+        {user && (
+          <User photoURL={user.photoURL} displayName={user.displayName} />
+        )}
         {!user ? (
-          <Button text={"LOGIN"} onClick={login} />
+          <Button text={"Login"} onClick={login} />
         ) : (
-          <Button text={"LOGOUT"} onClick={logout} />
+          <Button text={"Logout"} onClick={logout} />
         )}
       </nav>
     </header>

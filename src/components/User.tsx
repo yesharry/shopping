@@ -1,20 +1,17 @@
-interface IUSer {
-  user: {
-    photoURL?: string;
-    displayName?: string;
-    isAdmin?: boolean;
-  } | null;
+interface UserProps {
+  photoURL: string;
+  displayName: string;
 }
 
-const User = ({ user }: IUSer) => {
+const User = ({ photoURL, displayName }: UserProps) => {
   return (
     <div className=" flex items-center shrink-0">
       <img
         className=" w-8 h-8 rounded-full mr-2"
-        src={user?.photoURL}
-        alt={user?.displayName}
+        src={photoURL}
+        alt={displayName}
       />
-      <span className=" hidden md:block">{user?.displayName}</span>
+      <span className=" hidden md:block">{displayName}</span>
     </div>
   );
 };

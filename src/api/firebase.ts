@@ -1,10 +1,11 @@
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
+  onAuthStateChanged,
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
-  onAuthStateChanged,
+  User,
 } from "firebase/auth";
 import { getDatabase, ref, get } from "firebase/database";
 
@@ -21,32 +22,38 @@ const provider = new GoogleAuthProvider();
 const database = getDatabase(app);
 
 export const login = () => {
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      const user = result.user;
-      console.log(user);
-    })
-    .catch(console.error);
+  signInWithPopup(auth, provider).catch(console.error);
 };
 
 export const logout = () => {
   signOut(auth).catch(console.error);
 };
 
-export const onUserStateChange = (callback: (user: {} | null) => void) => {
+export const onUserStateChange = (
+  callback: (updateUser: Object | null) => void
+) => {
   onAuthStateChanged(auth, async (user) => {
     const updateUser = user ? await adminUser(user) : null;
+    console.log(
+      "onAuthStateChanged에 들어오는 인자 type check ->",
+      typeof user // object
+    );
+    console.log(
+      "onAuthStateChane에서 만든 변수 updateUser 관리자체크 변수 type check ->",
+      typeof updateUser // object
+    );
     callback(updateUser);
   });
 };
 
-const adminUser = (user: { uid: string } | null) => {
-  return get(ref(database, "admin")).then((snapshot) => {
-    if (snapshot.exists()) {
-      const admins = snapshot.val();
-      const isAdmin = admins.includes(user?.uid);
-      return { ...user, isAdmin };
-    }
-    return user;
-  });
+const adminUser = async (user: User) => {
+  return get(ref(database, "admins")) //
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        const admins = snapshot.val();
+        const isAdmin = admins.includes(user.uid);
+        return { ...user, isAdmin };
+      }
+      return user;
+    });
 };
