@@ -29,9 +29,7 @@ export const logout = () => {
   signOut(auth).catch(console.error);
 };
 
-export const onUserStateChange = (
-  callback: (updateUser: Object | null) => void
-) => {
+export const onUserStateChange = (callback: (user: Object | null) => void) => {
   onAuthStateChanged(auth, async (user) => {
     const updateUser = user ? await adminUser(user) : null;
     console.log(
