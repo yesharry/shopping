@@ -27,12 +27,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/products/new",
-        element: (
-          <NewProduct />
-          // <ProtectedRoute requireAdmin>
-          //   <NewProduct />
-          // </ProtectedRoute>
-        ),
+        element: <NewProduct />,
       },
       {
         path: "/products/:id",
@@ -40,12 +35,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/carts",
-        element: (
-          <MyCart />
-          // <ProtectedRoute>
-          //   <MyCart />
-          // </ProtectedRoute>
-        ),
+        element: <MyCart />,
       },
     ],
   },
