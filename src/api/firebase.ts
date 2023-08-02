@@ -1,12 +1,13 @@
 import { initializeApp } from "firebase/app";
 import {
   GoogleAuthProvider,
+  User,
   getAuth,
   onAuthStateChanged,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { getDatabase, ref, get, set } from "firebase/database";
+import { getDatabase, ref, get } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -28,11 +29,14 @@ export const logout = () => {
   signOut(auth).catch(console.error);
 };
 
-interface UserProps {
-  uid: string;
-}
+export const onUserStateChange = (callback: (user: any) => void) => {
+  onAuthStateChanged(auth, async (user) => {
+    const updateUser = user ? await adminUser(user) : null;
+    callback(updateUser);
+  });
+};
 
-const adminUser = async (user: UserProps) => {
+const adminUser = async (user: User) => {
   // user : type <- 바꿔줘
   return get(ref(database, "admins")) //
     .then((snapshot) => {
@@ -42,11 +46,4 @@ const adminUser = async (user: UserProps) => {
         return { ...user, isAdmin };
       }
     });
-};
-
-export const onUserStateChange = (callback: (user: any) => void) => {
-  onAuthStateChanged(auth, async (user) => {
-    const updateUser = user ? await adminUser(user) : null;
-    callback(updateUser);
-  });
 };

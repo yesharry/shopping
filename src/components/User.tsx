@@ -1,6 +1,9 @@
-import { IUser } from "./Navbar";
+interface IUserProps {
+  photoURL: string;
+  displayName: string;
+}
 
-const User = ({ photoURL, displayName }: IUser) => {
+const User = ({ photoURL, displayName }: IUserProps) => {
   return (
     <div className=" flex items-center shrink-0">
       <img

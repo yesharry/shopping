@@ -5,11 +5,12 @@ import { useEffect, useState } from "react";
 import { login, logout, onUserStateChange } from "../api/firebase";
 import Button from "./style/Button";
 import User from "./User";
+// import { useAuthContext } from "./context/AuthContext";
 
 export interface IUser {
   displayName: string;
   photoURL: string;
-  isAdmin?: string;
+  isAdmin?: boolean;
 }
 
 const Navbar = () => {
